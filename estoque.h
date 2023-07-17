@@ -1,15 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 // Tipo que define o produto
 typedef struct produto Produto;
 
 // Tipo que define a lista
 typedef struct lista Lista;
 
+/* Cria lista vazia */
+Lista *CriaLista();
+
 /* Cria um novo produto */
 Produto *CriaProduto(char *nome, int codigo, float valor,
                      int *data_de_validade);
-
-/* Cria lista vazia */
-Lista *CriaLista();
 
 /* Insere um produto em uma lista */
 Lista *InsereListaProduto(Lista *l, Produto *p);
