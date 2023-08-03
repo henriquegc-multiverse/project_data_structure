@@ -43,14 +43,8 @@ Produto *CriaProduto(char *nome, int codigo, float valor, int *data_de_validade)
 /* Insere um produto em uma lista */
 Lista *InsereListaProduto(Lista *l, Produto *p) {
   Lista* new_l = (Lista*) malloc(sizeof(Lista));
-  FILE *f = fopen("./tests/saida-me.txt", "a");
 
-  if (f == NULL) {
-    puts("Erro ao abrir o arquivo!");
-    perror(NULL);
-  }
-
-  fseek(f, 0, SEEK_END);
+  fseek(f_final, 0, SEEK_END);
 
   if (p == NULL) {
     puts("Lista não criada");
@@ -60,7 +54,7 @@ Lista *InsereListaProduto(Lista *l, Produto *p) {
   new_l->p = p;
   new_l->prox = l;
 
-  fprintf(f, "PRODUTO %d %s ADICIONADO\n", p->codigo, p->nome);
+  fprintf(f_final, "PRODUTO %s %d ADICIONADO\n", p->nome, p->codigo);
 
   return new_l;
 }
@@ -69,14 +63,8 @@ Lista *InsereListaProduto(Lista *l, Produto *p) {
 Lista *RetiraListaProduto(Lista *l, int id_produto) {
   Lista* prev = CriaLista();
   Lista* new_l = l;
-  FILE *f = fopen("./tests/saida-me.txt", "a");
 
-  if (f == NULL) {
-    puts("Erro ao abrir o arquivo!");
-    perror(NULL);
-  }
-
-  fseek(f, 0, SEEK_END);
+  fseek(f_final, 0, SEEK_END);
 
   while(new_l != NULL && new_l->p->codigo != id_produto) {
     prev = new_l;
@@ -93,7 +81,7 @@ Lista *RetiraListaProduto(Lista *l, int id_produto) {
     prev->prox = new_l->prox; // O elemento está no meio ou no final
   }
 
-  fprintf(f, "PRODUTO %d %s RETIRADO\n", prev->p->codigo, prev->p->nome);
+  fprintf(f_final, "PRODUTO %d %s RETIRADO\n", new_l->p->codigo, new_l->p->nome);
 
   free(new_l);
   return l;
@@ -103,42 +91,58 @@ Lista *RetiraListaProduto(Lista *l, int id_produto) {
 int VerificaListaProduto(Lista *l, int id_produto) {
   Lista* new_l = l;
 
-  for (new_l = l; l != NULL; new_l = new_l->prox) {
+  for (new_l = l; new_l != NULL; new_l = new_l->prox) {
     if (new_l->p->codigo == id_produto) {
+      fprintf(f_final, "PRODUTO %d PRESENTE NA LISTA\n", new_l->p->codigo);
       return 1; // Está presente
     }
   }
 
+  fprintf(f_final, "PRODUTO NAO ENCONTRADO NA LISTA\n");
+
   return 0;
+}
+
+Lista *AtualizaPrecoProduto(Lista *l, int id_produto, float novo_preco) {
+  Lista* new_l = l;
+
+  for (new_l = l; new_l != NULL; new_l = new_l->prox) {
+    if (new_l->p->codigo == id_produto) {
+      new_l->p->valor = novo_preco;
+      fprintf(f_final, "PRECO ATUALIZADO %s %d %.2f\n", new_l->p->nome, new_l->p->codigo, new_l->p->valor);
+      
+      return l; // Está presente
+    }
+  }
+
+  return l; // Não está presente
 }
 
 /* Verifica se existe um produto está vencido em uma determinada lista */
 Lista *VerificaListaValidade(Lista *l, int dia, int mes, int ano) {
   Lista* new_l = l;
-  FILE *f = fopen("./tests/saida-me.txt", "a");
+  int is_one_overdue = 0;
 
-  if (f == NULL) {
-    puts("Erro ao abrir o arquivo!");
-    perror(NULL);
-  }
-
-  fseek(f, 0, SEEK_END);
+  fseek(f_final, 0, SEEK_END);
 
   for (new_l = l; new_l != NULL; new_l = new_l->prox) {
-    if (new_l->p->data[2] > ano) {
-      fprintf(f, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
+    if (ano > new_l->p->data[2]) {
+      is_one_overdue = 1;
+      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
       continue;
     }
 
     // Se passar aqui, o ano já é menor ou igual
-    if (new_l->p->data[2] == ano && new_l->p->data[1] > mes) {
-      fprintf(f, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
+    if (new_l->p->data[2] == ano && mes > new_l->p->data[1]) {
+      is_one_overdue = 1;
+      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
       continue;
     }
 
     // Se passar aqui, o ano é menor ou igual e o mês é menor ou igual
-    if (new_l->p->data[2] == ano && new_l->p->data[1] == mes && new_l->p->data[0] > dia) {
-      fprintf(f, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
+    if (new_l->p->data[2] == ano && new_l->p->data[1] == mes && dia > new_l->p->data[0]) {
+      is_one_overdue = 1;
+      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
       continue;
     }
 
@@ -147,23 +151,21 @@ Lista *VerificaListaValidade(Lista *l, int dia, int mes, int ano) {
     // Portanto, não está vencido 
   }
 
+  if (is_one_overdue != 1) {
+    fprintf(f_final, "PRODUTO VENCIDO NAO ENCONTRADO NA LISTA\n");
+  }
+
   return l;
 }
 
 /* Imprime todos os produtos de uma lista */
 void ImprimeListaProdutos(Lista *l) {
   Lista* new_l = l;
-  FILE *f = fopen("./tests/saida-me.txt", "a");
 
-  if (f == NULL) {
-    puts("Erro ao abrir o arquivo!");
-    perror(NULL);
-  }
-
-  fseek(f, 0, SEEK_END);
+  fseek(f_final, 0, SEEK_END);
 
   for (new_l = l; new_l != NULL; new_l = new_l->prox) {
-    fprintf(f, "%s %d %.1f %d %d %d\n", new_l->p->nome, new_l->p->codigo, new_l->p->valor, new_l->p->data[0], new_l->p->data[1], new_l->p->data[1]);
+    fprintf(f_final, "%s %d %.1f %d %d %d\n", new_l->p->nome, new_l->p->codigo, new_l->p->valor, new_l->p->data[0], new_l->p->data[1], new_l->p->data[2]);
   }
 }
 
