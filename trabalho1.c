@@ -5,13 +5,22 @@
 
 #define BUF_LEN 256
 
+FILE *f;
+FILE *f_final;
+
 int main() {
   char aa[20];
-  FILE *f = fopen("./tests/entrada.txt", "r");
+  f = fopen("./tests/entrada.txt", "r");
+  f_final = fopen("./tests/saida-me.txt", "a");
+
+  if (f_final == NULL) {
+    puts("Erro ao abrir o arquivo de escrita!");
+    perror(NULL);
+  }
 
   if (f == NULL) {
-    puts("Erro ao abrir o arquivo!");
-    return 1;
+    puts("Erro ao abrir o arquivo de leitura!");
+    perror(NULL);
   }
 
   char nome[20];
@@ -22,7 +31,6 @@ int main() {
   int i;
   int j;
   float k;
-
 
   Lista* l = CriaLista();
 
@@ -35,7 +43,6 @@ int main() {
       fscanf(f, "%d", &data[0]); // DIA
       fscanf(f, "%d", &data[1]); // MES
       fscanf(f, "%d", &data[2]); // ANO
-      printf("PRODUTO");
 
       Produto* p = CriaProduto(nome, id, preco, data);
       l = InsereListaProduto(l, p);
@@ -52,11 +59,11 @@ int main() {
 
     else if (!strcmp(aa, "ATUALIZA_PRECO")) {
       fscanf(f, "%d", &j); // ID
-      fscanf(f, "%fs", &k); // NOVO PRECO
+      fscanf(f, "%f", &k); // NOVO PRECO
+      l = AtualizaPrecoProduto(l, j, k);
     }
 
     else if (!strcmp(aa, "VERIFICA_VALIDADE")) {
-      // Ver se algum produto ta fora de validade
       fscanf(f, "%d", &data[0]); // DIA
       fscanf(f, "%d", &data[1]); // MES
       fscanf(f, "%d", &data[2]); // ANO
@@ -64,9 +71,8 @@ int main() {
     }
 
     else if (!strcmp(aa, "VERIFICA_LISTA")) {
-      // Ver se o produto ta na lista
       fscanf(f, "%d", &j); // ID
-      // int isProductInlist = VerificaListaProduto(l, j); - ERRO
+      int isProductInlist = VerificaListaProduto(l, j);
     }
 
     else if (!strcmp(aa, "ORDENA_LISTA_VALIDADE")) {
@@ -88,6 +94,7 @@ int main() {
   }
 
   fclose(f); 
+  fclose(f_final);
 
   return 0;
 }
