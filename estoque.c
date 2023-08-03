@@ -195,6 +195,34 @@ Lista *OrdenaListaValor(Lista *l) {
 }
 
 /* Orderna Lista pelo valor do produto */
-// Lista *OrdenaListaVencimento(Lista *l) {
+Lista *OrdenaListaVencimento(Lista *l) {
+  Lista* new_l;
+  
+  if (l == NULL) {
+    return l;
+  }
 
-// }
+  for (new_l = l; new_l->prox != NULL; new_l = new_l->prox) {
+    Lista* min = new_l;
+
+    for (Lista* j = new_l->prox; j != NULL; j = j->prox) {
+      if (j->p->data[2] < min->p->data[2]) {
+        min = j;
+      }
+
+      if (j->p->data[2] == min->p->data[2] && j->p->data[1] < min->p->data[1]) {
+        min = j;
+      }
+
+      if (j->p->data[2] == min->p->data[2] && j->p->data[1] == min->p->data[1] && j->p->data[0] < min->p->data[0]) {
+        min = j;
+      }
+    }
+
+    Produto *aux = new_l->p;
+    new_l->p = min->p;
+    min->p = aux;
+  }
+
+  return l;
+}

@@ -76,7 +76,7 @@ int main() {
     }
 
     else if (!strcmp(aa, "ORDENA_LISTA_VALIDADE")) {
-      // Ordenar lista por validade
+      l = OrdenaListaVencimento(l);
     }
 
     else if (!strcmp(aa, "ORDENA_LISTA_VALOR")) {
