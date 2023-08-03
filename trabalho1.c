@@ -80,8 +80,7 @@ int main() {
     }
 
     else if (!strcmp(aa, "ORDENA_LISTA_VALOR")) {
-      // Ordenar lista por valor
-      // l = OrdenaListaValor(l); - ERRO
+      l = OrdenaListaValor(l);
     }
 
     else if (!strcmp(aa, "FIM")) {

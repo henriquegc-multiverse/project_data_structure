@@ -109,7 +109,7 @@ Lista *AtualizaPrecoProduto(Lista *l, int id_produto, float novo_preco) {
   for (new_l = l; new_l != NULL; new_l = new_l->prox) {
     if (new_l->p->codigo == id_produto) {
       new_l->p->valor = novo_preco;
-      fprintf(f_final, "PRECO ATUALIZADO %s %d %.2f\n", new_l->p->nome, new_l->p->codigo, new_l->p->valor);
+      fprintf(f_final, "PRECO ATUALIZADO %s %d %.1f\n", new_l->p->nome, new_l->p->codigo, new_l->p->valor);
       
       return l; // Está presente
     }
@@ -169,54 +169,32 @@ void ImprimeListaProdutos(Lista *l) {
   }
 }
 
-void swap(Produto *a, Produto *b) {
-    Produto temp = *a;
-    *a = *b;
-    *b = temp;
-}
-
-// Função auxiliar do Quick Sort para encontrar o pivô
-Lista *partition(Lista *first, Lista *last) {
-    float pivot = last->p->valor;
-    Lista *i = first->prox;
-
-    for (Lista *j = first; j != last; j = j->prox) {
-        if (j->p->valor <= pivot) {
-            swap(i->p, j->p);
-            i = i->prox;
-        }
-    }
-
-    swap(i->p, last->p);
-    return i;
-}
-
-// Função principal do Quick Sort para ordenar a lista
-void quickSort(Lista *first, Lista *last) {
-    if (first != last && first != NULL && last != NULL) {
-        Lista *pivot = partition(first, last);
-        quickSort(first, pivot->prox);
-        quickSort(pivot->prox->prox, last);
-    }
-}
-
-// Função para ordenar a lista de produtos pelo valor usando Quick Sort
+/* Orderna Lista pelo valor do produto */
 Lista *OrdenaListaValor(Lista *l) {
-    Lista *fim = l;
-
-    while (fim->prox != NULL)
-        fim = fim->prox;
-
-    quickSort(l, fim);
+  Lista* new_l;
+  
+  if (l == NULL) {
     return l;
+  }
+
+  for (new_l = l; new_l->prox != NULL; new_l = new_l->prox) {
+    Lista* min = new_l;
+
+    for (Lista* j = new_l->prox; j != NULL; j = j->prox) {
+      if (j->p->valor < min->p->valor) {
+        min = j;
+      }
+    }
+
+    Produto *aux = new_l->p;
+    new_l->p = min->p;
+    min->p = aux;
+  }
+
+  return l;
 }
-
-// /* Orderna Lista pelo valor do produto */
-// Lista *OrdenaListaValor(Lista *l) {
-
-// }
 
 /* Orderna Lista pelo valor do produto */
-Lista *OrdenaListaVencimento(Lista *l) {
+// Lista *OrdenaListaVencimento(Lista *l) {
 
-}
+// }
