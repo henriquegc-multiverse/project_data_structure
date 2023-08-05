@@ -1,2 +1,2 @@
-trab1:
-	clang -lm -o trab1 trabalho1.c estoque.c 
+estoque:
+	clang -lm -o estoque trabalho1.c estoque.c 
