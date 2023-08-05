@@ -1,17 +1,24 @@
 #include "estoque.h"
 #include <string.h>
 #include <time.h>
-#include <string.h>
 
 #define BUF_LEN 256
 
 FILE *f;
 FILE *f_final;
 
-int main() {
-  char aa[20];
-  f = fopen("./tests/entrada.txt", "r");
-  f_final = fopen("./tests/saida-me.txt", "a");
+int main(int argc, char *argv[]) {
+  char reader[20];
+
+  if (argc != 3) {
+    printf("\nUso: $ %s <carminho do arquivo de entrada>.txt <caminho do "
+           "arquivo de saida>.txt\n",
+           argv[0]);
+    exit(1);
+  }
+
+  f = fopen(argv[1], "r");
+  f_final = fopen(argv[2], "a");
 
   if (f_final == NULL) {
     puts("Erro ao abrir o arquivo de escrita!");
@@ -28,71 +35,67 @@ int main() {
   float preco;
   int data[3];
 
-  int i;
-  int j;
-  float k;
+  Lista *l = CriaLista();
 
-  Lista* l = CriaLista();
+  while (fscanf(f, "%s", reader) == 1) {
 
-  while(fscanf(f, "%s", aa) == 1) {
-
-    if (!strcmp(aa, "PRODUTO")) {
-      fscanf(f, "%s", nome); // PRODUTO
-      fscanf(f, "%d", &id); // ID
-      fscanf(f, "%f", &preco); // PRECO
+    if (!strcmp(reader, "PRODUTO")) {
+      fscanf(f, "%s", nome);     // PRODUTO
+      fscanf(f, "%d", &id);      // ID
+      fscanf(f, "%f", &preco);   // PRECO
       fscanf(f, "%d", &data[0]); // DIA
       fscanf(f, "%d", &data[1]); // MES
       fscanf(f, "%d", &data[2]); // ANO
 
-      Produto* p = CriaProduto(nome, id, preco, data);
+      Produto *p = CriaProduto(nome, id, preco, data);
       l = InsereListaProduto(l, p);
     }
 
-    else if (!strcmp(aa, "RETIRA")) {
-      fscanf(f, "%d", &i); // ID
-      l = RetiraListaProduto(l, i);
+    else if (!strcmp(reader, "RETIRA")) {
+      fscanf(f, "%d", &id); // ID
+      l = RetiraListaProduto(l, id);
     }
 
-    else if (!strcmp(aa, "IMPRIME_LISTA")) {
+    else if (!strcmp(reader, "IMPRIME_LISTA")) {
       ImprimeListaProdutos(l);
-    }  
-
-    else if (!strcmp(aa, "ATUALIZA_PRECO")) {
-      fscanf(f, "%d", &j); // ID
-      fscanf(f, "%f", &k); // NOVO PRECO
-      l = AtualizaPrecoProduto(l, j, k);
     }
 
-    else if (!strcmp(aa, "VERIFICA_VALIDADE")) {
+    else if (!strcmp(reader, "ATUALIZA_PRECO")) {
+      fscanf(f, "%d", &id);    // ID
+      fscanf(f, "%f", &preco); // NOVO PRECO
+      l = AtualizaPrecoProduto(l, id, preco);
+    }
+
+    else if (!strcmp(reader, "VERIFICA_VALIDADE")) {
       fscanf(f, "%d", &data[0]); // DIA
       fscanf(f, "%d", &data[1]); // MES
       fscanf(f, "%d", &data[2]); // ANO
       l = VerificaListaValidade(l, data[0], data[1], data[2]);
     }
 
-    else if (!strcmp(aa, "VERIFICA_LISTA")) {
-      fscanf(f, "%d", &j); // ID
-      int isProductInlist = VerificaListaProduto(l, j);
+    else if (!strcmp(reader, "VERIFICA_LISTA")) {
+      fscanf(f, "%d", &id); // ID
+      int isProductInlist = VerificaListaProduto(l, id);
     }
 
-    else if (!strcmp(aa, "ORDENA_LISTA_VALIDADE")) {
+    else if (!strcmp(reader, "ORDENA_LISTA_VALIDADE")) {
       l = OrdenaListaVencimento(l);
     }
 
-    else if (!strcmp(aa, "ORDENA_LISTA_VALOR")) {
+    else if (!strcmp(reader, "ORDENA_LISTA_VALOR")) {
       l = OrdenaListaValor(l);
     }
 
-    else if (!strcmp(aa, "FIM")) {
+    else if (!strcmp(reader, "FIM")) {
       break;
     }
 
     else {
-      printf("Comando não reconhecido: %s\n", aa);
+      printf("Comando não reconhecido: %s\n", reader);
     }
   }
 
-  fclose(f); 
+  fclose(f);
   fclose(f_final);
 
   return 0;
