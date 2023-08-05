@@ -13,13 +13,12 @@ struct lista {
 };
 
 /* Cria lista vazia */
-Lista *CriaLista() {
-  return NULL;
-}
+Lista *CriaLista() { return NULL; }
 
 /* Cria um novo produto */
-Produto *CriaProduto(char *nome, int codigo, float valor, int *data_de_validade) {
-  Produto* p = (Produto*) malloc(sizeof(Produto));
+Produto *CriaProduto(char *nome, int codigo, float valor,
+                     int *data_de_validade) {
+  Produto *p = (Produto *)malloc(sizeof(Produto));
 
   if (p == NULL) {
     puts("Produto não criado");
@@ -42,7 +41,7 @@ Produto *CriaProduto(char *nome, int codigo, float valor, int *data_de_validade)
 
 /* Insere um produto em uma lista */
 Lista *InsereListaProduto(Lista *l, Produto *p) {
-  Lista* new_l = (Lista*) malloc(sizeof(Lista));
+  Lista *new_l = (Lista *)malloc(sizeof(Lista));
 
   fseek(f_final, 0, SEEK_END);
 
@@ -61,12 +60,12 @@ Lista *InsereListaProduto(Lista *l, Produto *p) {
 
 /* Retira um produto de uma determinada lista */
 Lista *RetiraListaProduto(Lista *l, int id_produto) {
-  Lista* prev = CriaLista();
-  Lista* new_l = l;
+  Lista *prev = CriaLista();
+  Lista *new_l = l;
 
   fseek(f_final, 0, SEEK_END);
 
-  while(new_l != NULL && new_l->p->codigo != id_produto) {
+  while (new_l != NULL && new_l->p->codigo != id_produto) {
     prev = new_l;
     new_l = new_l->prox;
   }
@@ -81,7 +80,8 @@ Lista *RetiraListaProduto(Lista *l, int id_produto) {
     prev->prox = new_l->prox; // O elemento está no meio ou no final
   }
 
-  fprintf(f_final, "PRODUTO %d %s RETIRADO\n", new_l->p->codigo, new_l->p->nome);
+  fprintf(f_final, "PRODUTO %d %s RETIRADO\n", new_l->p->codigo,
+          new_l->p->nome);
 
   free(new_l);
   return l;
@@ -89,7 +89,7 @@ Lista *RetiraListaProduto(Lista *l, int id_produto) {
 
 /* Verifica se um produto está presente em uma determinada lista */
 int VerificaListaProduto(Lista *l, int id_produto) {
-  Lista* new_l = l;
+  Lista *new_l = l;
 
   for (new_l = l; new_l != NULL; new_l = new_l->prox) {
     if (new_l->p->codigo == id_produto) {
@@ -104,13 +104,14 @@ int VerificaListaProduto(Lista *l, int id_produto) {
 }
 
 Lista *AtualizaPrecoProduto(Lista *l, int id_produto, float novo_preco) {
-  Lista* new_l = l;
+  Lista *new_l = l;
 
   for (new_l = l; new_l != NULL; new_l = new_l->prox) {
     if (new_l->p->codigo == id_produto) {
       new_l->p->valor = novo_preco;
-      fprintf(f_final, "PRECO ATUALIZADO %s %d %.1f\n", new_l->p->nome, new_l->p->codigo, new_l->p->valor);
-      
+      fprintf(f_final, "PRECO ATUALIZADO %s %d %.1f\n", new_l->p->nome,
+              new_l->p->codigo, new_l->p->valor);
+
       return l; // Está presente
     }
   }
@@ -120,7 +121,7 @@ Lista *AtualizaPrecoProduto(Lista *l, int id_produto, float novo_preco) {
 
 /* Verifica se existe um produto está vencido em uma determinada lista */
 Lista *VerificaListaValidade(Lista *l, int dia, int mes, int ano) {
-  Lista* new_l = l;
+  Lista *new_l = l;
   int is_one_overdue = 0;
 
   fseek(f_final, 0, SEEK_END);
@@ -128,27 +129,31 @@ Lista *VerificaListaValidade(Lista *l, int dia, int mes, int ano) {
   for (new_l = l; new_l != NULL; new_l = new_l->prox) {
     if (ano > new_l->p->data[2]) {
       is_one_overdue = 1;
-      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
+      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo,
+              new_l->p->nome);
       continue;
     }
 
     // Se passar aqui, o ano já é menor ou igual
     if (new_l->p->data[2] == ano && mes > new_l->p->data[1]) {
       is_one_overdue = 1;
-      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
+      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo,
+              new_l->p->nome);
       continue;
     }
 
     // Se passar aqui, o ano é menor ou igual e o mês é menor ou igual
-    if (new_l->p->data[2] == ano && new_l->p->data[1] == mes && dia > new_l->p->data[0]) {
+    if (new_l->p->data[2] == ano && new_l->p->data[1] == mes &&
+        dia > new_l->p->data[0]) {
       is_one_overdue = 1;
-      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo, new_l->p->nome);
+      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo,
+              new_l->p->nome);
       continue;
     }
 
-    // Se passar aqui, o ano é menor ou igual, e o mês é menor ou igual e o dia é menor ou igual
-    // Ou seja, o produto não está vencido OU ele vence hoje
-    // Portanto, não está vencido 
+    // Se passar aqui, o ano é menor ou igual, e o mês é menor ou igual e o dia
+    // é menor ou igual Ou seja, o produto não está vencido OU ele vence hoje
+    // Portanto, não está vencido
   }
 
   if (is_one_overdue != 1) {
@@ -160,27 +165,29 @@ Lista *VerificaListaValidade(Lista *l, int dia, int mes, int ano) {
 
 /* Imprime todos os produtos de uma lista */
 void ImprimeListaProdutos(Lista *l) {
-  Lista* new_l = l;
+  Lista *new_l = l;
 
   fseek(f_final, 0, SEEK_END);
 
   for (new_l = l; new_l != NULL; new_l = new_l->prox) {
-    fprintf(f_final, "%s %d %.1f %d %d %d\n", new_l->p->nome, new_l->p->codigo, new_l->p->valor, new_l->p->data[0], new_l->p->data[1], new_l->p->data[2]);
+    fprintf(f_final, "%s %d %.1f %d %d %d\n", new_l->p->nome, new_l->p->codigo,
+            new_l->p->valor, new_l->p->data[0], new_l->p->data[1],
+            new_l->p->data[2]);
   }
 }
 
 /* Orderna Lista pelo valor do produto */
 Lista *OrdenaListaValor(Lista *l) {
-  Lista* new_l;
-  
+  Lista *new_l;
+
   if (l == NULL) {
     return l;
   }
 
   for (new_l = l; new_l->prox != NULL; new_l = new_l->prox) {
-    Lista* min = new_l;
+    Lista *min = new_l;
 
-    for (Lista* j = new_l->prox; j != NULL; j = j->prox) {
+    for (Lista *j = new_l->prox; j != NULL; j = j->prox) {
       if (j->p->valor < min->p->valor) {
         min = j;
       }
@@ -196,16 +203,16 @@ Lista *OrdenaListaValor(Lista *l) {
 
 /* Orderna Lista pelo valor do produto */
 Lista *OrdenaListaVencimento(Lista *l) {
-  Lista* new_l;
-  
+  Lista *new_l;
+
   if (l == NULL) {
     return l;
   }
 
   for (new_l = l; new_l->prox != NULL; new_l = new_l->prox) {
-    Lista* min = new_l;
+    Lista *min = new_l;
 
-    for (Lista* j = new_l->prox; j != NULL; j = j->prox) {
+    for (Lista *j = new_l->prox; j != NULL; j = j->prox) {
       if (j->p->data[2] < min->p->data[2]) {
         min = j;
       }
@@ -214,7 +221,8 @@ Lista *OrdenaListaVencimento(Lista *l) {
         min = j;
       }
 
-      if (j->p->data[2] == min->p->data[2] && j->p->data[1] == min->p->data[1] && j->p->data[0] < min->p->data[0]) {
+      if (j->p->data[2] == min->p->data[2] &&
+          j->p->data[1] == min->p->data[1] && j->p->data[0] < min->p->data[0]) {
         min = j;
       }
     }
