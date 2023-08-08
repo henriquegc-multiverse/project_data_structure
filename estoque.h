@@ -39,8 +39,3 @@ Lista *OrdenaListaValor(Lista *p);
 
 /* Orderna Lista pelo valor do produto */
 Lista *OrdenaListaVencimento(Lista *p);
-
-/*-------------------------------------------*/
-
-// Função Quick Sort para ordenar a lista
-void quickSort(Lista *inicio, Lista *fim);
