@@ -146,8 +146,8 @@ Lista *VerificaListaValidade(Lista *l, int dia, int mes, int ano) {
     if (new_l->p->data[2] == ano && new_l->p->data[1] == mes &&
         dia > new_l->p->data[0]) {
       is_one_overdue = 1;
-      fprintf(f_final, "PRODUTO %d %s VENCIDO\n", new_l->p->codigo,
-              new_l->p->nome);
+      fprintf(f_final, "PRODUTO %s %d VENCIDO\n", new_l->p->nome,
+              new_l->p->codigo);
       continue;
     }
 
