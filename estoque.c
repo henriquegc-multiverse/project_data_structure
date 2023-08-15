@@ -1,4 +1,5 @@
 #include "estoque.h"
+#include <time.h>
 
 struct produto {
   char nome[20];
@@ -178,11 +179,16 @@ void ImprimeListaProdutos(Lista *l) {
 
 /* Orderna Lista pelo valor do produto */
 Lista *OrdenaListaValor(Lista *l) {
+  clock_t inicio, fim;
+  double tempo_gasto;
+
   Lista *new_l;
 
   if (l == NULL) {
     return l;
   }
+
+  inicio = clock();
 
   for (new_l = l; new_l->prox != NULL; new_l = new_l->prox) {
     Lista *min = new_l;
@@ -196,7 +202,13 @@ Lista *OrdenaListaValor(Lista *l) {
     Produto *aux = new_l->p;
     new_l->p = min->p;
     min->p = aux;
+
   }
+  
+  fim = clock();
+  tempo_gasto = (double)(fim - inicio) / CLOCKS_PER_SEC;
+
+  printf("%f\n", tempo_gasto);
 
   return l;
 }
