@@ -6,19 +6,21 @@
 
 FILE *f;
 FILE *f_final;
+FILE *f_tempos;
 
 int main(int argc, char *argv[]) {
   char reader[20];
 
-  if (argc != 3) {
+  if (argc != 4) {
     printf("\nUso: $ %s <carminho do arquivo de entrada>.txt <caminho do "
-           "arquivo de saida>.txt\n",
+           "arquivo de saida>.txt <arquivo de tempos>.txt\n",
            argv[0]);
     exit(1);
   }
 
   f = fopen(argv[1], "r");
   f_final = fopen(argv[2], "a");
+  f_tempos = fopen(argv[3], "a+");
 
   if (f_final == NULL) {
     puts("Erro ao abrir o arquivo de escrita!");
@@ -27,6 +29,11 @@ int main(int argc, char *argv[]) {
 
   if (f == NULL) {
     puts("Erro ao abrir o arquivo de leitura!");
+    perror(NULL);
+  }
+
+  if (f_tempos == NULL) {
+    puts("Erro ao abrir o arquivo de tempos!");
     perror(NULL);
   }
 
@@ -97,6 +104,7 @@ int main(int argc, char *argv[]) {
 
   fclose(f);
   fclose(f_final);
+  fclose(f_tempos);
 
   return 0;
 }

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 extern FILE *f_final;
+extern FILE *f_tempos;
 
 // Tipo que define o produto
 typedef struct produto Produto;

@@ -202,13 +202,12 @@ Lista *OrdenaListaValor(Lista *l) {
     Produto *aux = new_l->p;
     new_l->p = min->p;
     min->p = aux;
-
   }
   
   fim = clock();
   tempo_gasto = (double)(fim - inicio) / CLOCKS_PER_SEC;
 
-  printf("%f\n", tempo_gasto);
+  fprintf(f_tempos, "%f\n", tempo_gasto);
 
   return l;
 }
