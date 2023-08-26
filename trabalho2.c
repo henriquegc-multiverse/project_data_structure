@@ -2,7 +2,7 @@
 
 FILE *file;
 
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
   for (int i = MIN_LENGTH; i <= MAX_LENGTH; i = i + GAP) {
     char filename[15];
     sprintf(filename, "%s%d%s", "lista-", i / MIN_LENGTH, ".txt");
@@ -19,4 +19,6 @@ void main(int argc, char *argv[]) {
 
     fclose(file);
   }
+
+  return 0;
 }
