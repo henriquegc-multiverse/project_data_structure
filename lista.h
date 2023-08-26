@@ -5,9 +5,9 @@
 
 extern FILE *file;
 
-#define MIN_LENGTH 100
-#define MAX_LENGTH 1000
-#define GAP 100
+#define MIN_LENGTH 5000
+#define MAX_LENGTH 50000
+#define GAP 5000
 #define REPETITIONS 30
 
 // Insere o produto no arquivo x vezes, sendo x = tamanho
